@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torchsummary\torchsummary.py", line 140, in summary
+    _ = model.to(device)(*x, *args, **kwargs)  # type: ignore[misc]
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\segmentation_models_pytorch\base\model.py", line 27, in forward
+    self.check_input_shape(x)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\segmentation_models_pytorch\base\model.py", line 19, in check_input_shape
+    raise RuntimeError(
+RuntimeError: Wrong input shape height=200, width=150. Expected image height and width divisible by 32. Consider pad your images to shape (224, 160).
+The above exception was the direct cause of the following exception:
+Traceback (most recent call last):
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 668, in <module>
+    print('end')
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 622, in main
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 392, in __init__
+    self.val_loss = None
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 398, in __instantiate_model
+    def __instantiate_model(self, model):
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torchsummary\torchsummary.py", line 143, in summary
+    raise RuntimeError(
+RuntimeError: Failed to run torchsummary. See above stack traces for more details. Executed layers up to: []

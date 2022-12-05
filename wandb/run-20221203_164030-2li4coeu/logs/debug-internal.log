@@ -1,0 +1,114 @@
+2022-12-03 16:40:30,874 INFO    StreamThr :20160 [internal.py:wandb_internal():88] W&B internal server running at pid: 20160, started at: 2022-12-03 16:40:30.873178
+2022-12-03 16:40:30,876 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: status
+2022-12-03 16:40:30,881 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: status
+2022-12-03 16:40:30,883 DEBUG   SenderThread:20160 [sender.py:send():303] send: header
+2022-12-03 16:40:30,883 INFO    WriterThread:20160 [datastore.py:open_for_write():75] open: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\run-2li4coeu.wandb
+2022-12-03 16:40:30,883 DEBUG   SenderThread:20160 [sender.py:send():303] send: run
+2022-12-03 16:40:31,333 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: check_version
+2022-12-03 16:40:31,350 INFO    SenderThread:20160 [dir_watcher.py:__init__():216] watching files in: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files
+2022-12-03 16:40:31,350 INFO    SenderThread:20160 [sender.py:_start_run_threads():928] run started: 2li4coeu with start time 1670082030.874178
+2022-12-03 16:40:31,351 DEBUG   SenderThread:20160 [sender.py:send():303] send: summary
+2022-12-03 16:40:31,351 INFO    SenderThread:20160 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-12-03 16:40:31,352 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: check_version
+2022-12-03 16:40:31,467 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: run_start
+2022-12-03 16:40:31,478 DEBUG   HandlerThread:20160 [system_info.py:__init__():31] System info init
+2022-12-03 16:40:31,478 DEBUG   HandlerThread:20160 [system_info.py:__init__():46] System info init done
+2022-12-03 16:40:31,478 INFO    HandlerThread:20160 [system_monitor.py:start():150] Starting system monitor
+2022-12-03 16:40:31,478 INFO    SystemMonitor:20160 [system_monitor.py:_start():116] Starting system asset monitoring threads
+2022-12-03 16:40:31,479 INFO    HandlerThread:20160 [system_monitor.py:probe():168] Collecting system info
+2022-12-03 16:40:31,483 INFO    SystemMonitor:20160 [interfaces.py:start():168] Started cpu
+2022-12-03 16:40:31,487 DEBUG   HandlerThread:20160 [system_info.py:probe():195] Probing system
+2022-12-03 16:40:31,487 INFO    SystemMonitor:20160 [interfaces.py:start():168] Started disk
+2022-12-03 16:40:31,493 INFO    SystemMonitor:20160 [interfaces.py:start():168] Started memory
+2022-12-03 16:40:31,502 INFO    SystemMonitor:20160 [interfaces.py:start():168] Started network
+2022-12-03 16:40:31,504 DEBUG   HandlerThread:20160 [git.py:repo():40] git repository is invalid
+2022-12-03 16:40:31,504 DEBUG   HandlerThread:20160 [system_info.py:probe():241] Probing system done
+2022-12-03 16:40:31,504 DEBUG   HandlerThread:20160 [system_monitor.py:probe():177] {'os': 'Windows-10-10.0.22621-SP0', 'python': '3.9.13', 'heartbeatAt': '2022-12-03T15:40:31.487557', 'startedAt': '2022-12-03T15:40:30.857177', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'C:/Users/alban/PycharmProjects/FDL/Kaggle/main.py', 'codePath': 'main.py', 'host': 'LAPTOP-T4QGB0N7', 'username': 'alban', 'executable': 'C:\\Users\\alban\\PycharmProjects\\FDL\\venv\\Scripts\\python.exe', 'cpu_count': 8, 'cpu_count_logical': 16, 'cpu_freq': {'current': 3301.0, 'min': 0.0, 'max': 3301.0}, 'cpu_freq_per_core': [{'current': 3301.0, 'min': 0.0, 'max': 3301.0}], 'disk': {'total': 930.4260902404785, 'used': 190.3453826904297}, 'memory': {'total': 15.406242370605469}}
+2022-12-03 16:40:31,504 INFO    HandlerThread:20160 [system_monitor.py:probe():178] Finished collecting system info
+2022-12-03 16:40:31,504 INFO    HandlerThread:20160 [system_monitor.py:probe():181] Publishing system info
+2022-12-03 16:40:31,504 DEBUG   HandlerThread:20160 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2022-12-03 16:40:31,506 DEBUG   HandlerThread:20160 [system_info.py:_save_pip():67] Saving pip packages done
+2022-12-03 16:40:31,509 INFO    HandlerThread:20160 [system_monitor.py:probe():183] Finished publishing system info
+2022-12-03 16:40:31,520 DEBUG   SenderThread:20160 [sender.py:send():303] send: files
+2022-12-03 16:40:31,520 INFO    SenderThread:20160 [sender.py:_save_file():1171] saving file wandb-metadata.json with policy now
+2022-12-03 16:40:31,531 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:40:31,532 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:40:31,701 DEBUG   SenderThread:20160 [sender.py:send():303] send: telemetry
+2022-12-03 16:40:32,114 INFO    Thread-24 :20160 [upload_job.py:push():143] Uploaded file C:\Users\alban\AppData\Local\Temp\tmpj466vvr5wandb\1go2z2jx-wandb-metadata.json
+2022-12-03 16:40:32,367 INFO    Thread-21 :20160 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files\wandb-summary.json
+2022-12-03 16:40:32,367 INFO    Thread-21 :20160 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files\requirements.txt
+2022-12-03 16:40:32,367 INFO    Thread-21 :20160 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files\wandb-metadata.json
+2022-12-03 16:40:46,713 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:40:46,714 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:41:01,671 INFO    Thread-21 :20160 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files\config.yaml
+2022-12-03 16:41:01,904 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:41:01,904 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:41:13,354 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: get_summary
+2022-12-03 16:41:13,435 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: get_summary
+2022-12-03 16:41:13,790 INFO    Thread-21 :20160 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files\output.log
+2022-12-03 16:41:15,811 INFO    Thread-21 :20160 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221203_164030-2li4coeu\files\output.log
+2022-12-03 16:41:17,086 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:41:17,087 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:41:31,505 DEBUG   SystemMonitor:20160 [system_monitor.py:_start():130] Starting system metrics aggregation loop
+2022-12-03 16:41:31,506 DEBUG   SenderThread:20160 [sender.py:send():303] send: stats
+2022-12-03 16:41:32,279 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:41:32,280 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:41:47,457 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:41:47,458 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:42:01,521 DEBUG   SenderThread:20160 [sender.py:send():303] send: stats
+2022-12-03 16:42:02,641 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:42:02,642 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:42:17,821 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:42:17,821 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:42:31,531 DEBUG   SenderThread:20160 [sender.py:send():303] send: stats
+2022-12-03 16:42:33,021 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-03 16:42:33,022 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: stop_status
+2022-12-03 16:42:39,892 DEBUG   SenderThread:20160 [sender.py:send():303] send: exit
+2022-12-03 16:42:39,892 INFO    SenderThread:20160 [sender.py:send_exit():442] handling exit code: 0
+2022-12-03 16:42:39,893 INFO    SenderThread:20160 [sender.py:send_exit():444] handling runtime: 128
+2022-12-03 16:42:39,894 INFO    SenderThread:20160 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-12-03 16:42:39,895 INFO    SenderThread:20160 [sender.py:send_exit():450] send defer
+2022-12-03 16:42:39,895 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,895 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 0
+2022-12-03 16:42:39,895 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,895 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 0
+2022-12-03 16:42:39,895 INFO    SenderThread:20160 [sender.py:transition_state():463] send defer: 1
+2022-12-03 16:42:39,896 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,896 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 1
+2022-12-03 16:42:39,896 INFO    HandlerThread:20160 [system_monitor.py:finish():160] Stopping system monitor
+2022-12-03 16:42:39,897 DEBUG   SystemMonitor:20160 [system_monitor.py:_start():137] Finished system metrics aggregation loop
+2022-12-03 16:42:39,897 DEBUG   SystemMonitor:20160 [system_monitor.py:_start():141] Publishing last batch of metrics
+2022-12-03 16:42:39,897 INFO    HandlerThread:20160 [interfaces.py:finish():173] Joined cpu
+2022-12-03 16:42:39,898 INFO    HandlerThread:20160 [interfaces.py:finish():173] Joined disk
+2022-12-03 16:42:39,898 INFO    HandlerThread:20160 [interfaces.py:finish():173] Joined memory
+2022-12-03 16:42:39,898 INFO    HandlerThread:20160 [interfaces.py:finish():173] Joined network
+2022-12-03 16:42:39,899 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,899 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 1
+2022-12-03 16:42:39,899 INFO    SenderThread:20160 [sender.py:transition_state():463] send defer: 2
+2022-12-03 16:42:39,899 DEBUG   SenderThread:20160 [sender.py:send():303] send: stats
+2022-12-03 16:42:39,900 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,900 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 2
+2022-12-03 16:42:39,900 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,900 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 2
+2022-12-03 16:42:39,900 INFO    SenderThread:20160 [sender.py:transition_state():463] send defer: 3
+2022-12-03 16:42:39,900 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,900 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 3
+2022-12-03 16:42:39,900 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,900 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 3
+2022-12-03 16:42:39,901 INFO    SenderThread:20160 [sender.py:transition_state():463] send defer: 4
+2022-12-03 16:42:39,901 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,901 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 4
+2022-12-03 16:42:39,901 DEBUG   SenderThread:20160 [sender.py:send():303] send: summary
+2022-12-03 16:42:39,903 INFO    SenderThread:20160 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-12-03 16:42:39,904 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,904 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 4
+2022-12-03 16:42:39,904 INFO    SenderThread:20160 [sender.py:transition_state():463] send defer: 5
+2022-12-03 16:42:39,904 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,905 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 5
+2022-12-03 16:42:39,905 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,905 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 5
+2022-12-03 16:42:39,905 INFO    SenderThread:20160 [sender.py:transition_state():463] send defer: 6
+2022-12-03 16:42:39,905 DEBUG   HandlerThread:20160 [handler.py:handle_request():139] handle_request: defer
+2022-12-03 16:42:39,905 INFO    HandlerThread:20160 [handler.py:handle_request_defer():162] handle defer: 6
+2022-12-03 16:42:39,906 DEBUG   SenderThread:20160 [sender.py:send_request():317] send_request: defer
+2022-12-03 16:42:39,906 INFO    SenderThread:20160 [sender.py:send_request_defer():459] handle sender defer: 6

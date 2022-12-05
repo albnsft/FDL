@@ -1,0 +1,173 @@
+2022-12-04 16:13:28,007 INFO    StreamThr :1212 [internal.py:wandb_internal():88] W&B internal server running at pid: 1212, started at: 2022-12-04 16:13:28.007878
+2022-12-04 16:13:28,007 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: status
+2022-12-04 16:13:28,007 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: status
+2022-12-04 16:13:28,013 DEBUG   SenderThread:1212 [sender.py:send():303] send: header
+2022-12-04 16:13:28,013 INFO    WriterThread:1212 [datastore.py:open_for_write():75] open: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\run-3hkwgu98.wandb
+2022-12-04 16:13:28,013 DEBUG   SenderThread:1212 [sender.py:send():303] send: run
+2022-12-04 16:13:32,891 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: check_version
+2022-12-04 16:13:32,898 INFO    SenderThread:1212 [dir_watcher.py:__init__():216] watching files in: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files
+2022-12-04 16:13:32,898 INFO    SenderThread:1212 [sender.py:_start_run_threads():928] run started: 3hkwgu98 with start time 1670166808.007877
+2022-12-04 16:13:32,898 DEBUG   SenderThread:1212 [sender.py:send():303] send: summary
+2022-12-04 16:13:32,898 INFO    SenderThread:1212 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-12-04 16:13:32,898 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: check_version
+2022-12-04 16:13:32,992 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: run_start
+2022-12-04 16:13:33,008 DEBUG   HandlerThread:1212 [system_info.py:__init__():31] System info init
+2022-12-04 16:13:33,008 DEBUG   HandlerThread:1212 [system_info.py:__init__():46] System info init done
+2022-12-04 16:13:33,008 INFO    HandlerThread:1212 [system_monitor.py:start():150] Starting system monitor
+2022-12-04 16:13:33,008 INFO    SystemMonitor:1212 [system_monitor.py:_start():116] Starting system asset monitoring threads
+2022-12-04 16:13:33,008 INFO    HandlerThread:1212 [system_monitor.py:probe():168] Collecting system info
+2022-12-04 16:13:33,024 INFO    SystemMonitor:1212 [interfaces.py:start():168] Started cpu
+2022-12-04 16:13:33,024 DEBUG   HandlerThread:1212 [system_info.py:probe():195] Probing system
+2022-12-04 16:13:33,024 INFO    SystemMonitor:1212 [interfaces.py:start():168] Started disk
+2022-12-04 16:13:33,039 INFO    SystemMonitor:1212 [interfaces.py:start():168] Started memory
+2022-12-04 16:13:33,039 INFO    SystemMonitor:1212 [interfaces.py:start():168] Started network
+2022-12-04 16:13:33,039 DEBUG   HandlerThread:1212 [git.py:repo():40] git repository is invalid
+2022-12-04 16:13:33,039 DEBUG   HandlerThread:1212 [system_info.py:probe():241] Probing system done
+2022-12-04 16:13:33,039 DEBUG   HandlerThread:1212 [system_monitor.py:probe():177] {'os': 'Windows-10-10.0.22621-SP0', 'python': '3.9.13', 'heartbeatAt': '2022-12-04T15:13:33.024037', 'startedAt': '2022-12-04T15:13:27.983792', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'C:\\Users\\alban\\PycharmProjects\\FDL\\Kaggle\\main.py', 'codePath': 'main.py', 'host': 'LAPTOP-T4QGB0N7', 'username': 'alban', 'executable': 'C:\\Users\\alban\\PycharmProjects\\FDL\\venv\\Scripts\\python.exe', 'cpu_count': 8, 'cpu_count_logical': 16, 'cpu_freq': {'current': 3301.0, 'min': 0.0, 'max': 3301.0}, 'cpu_freq_per_core': [{'current': 3301.0, 'min': 0.0, 'max': 3301.0}], 'disk': {'total': 930.4260902404785, 'used': 190.84348678588867}, 'memory': {'total': 15.406242370605469}}
+2022-12-04 16:13:33,039 INFO    HandlerThread:1212 [system_monitor.py:probe():178] Finished collecting system info
+2022-12-04 16:13:33,039 INFO    HandlerThread:1212 [system_monitor.py:probe():181] Publishing system info
+2022-12-04 16:13:33,039 DEBUG   HandlerThread:1212 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2022-12-04 16:13:33,055 DEBUG   HandlerThread:1212 [system_info.py:_save_pip():67] Saving pip packages done
+2022-12-04 16:13:33,055 INFO    HandlerThread:1212 [system_monitor.py:probe():183] Finished publishing system info
+2022-12-04 16:13:33,055 DEBUG   SenderThread:1212 [sender.py:send():303] send: files
+2022-12-04 16:13:33,055 INFO    SenderThread:1212 [sender.py:_save_file():1171] saving file wandb-metadata.json with policy now
+2022-12-04 16:13:33,070 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:13:33,070 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:13:33,244 DEBUG   SenderThread:1212 [sender.py:send():303] send: telemetry
+2022-12-04 16:13:33,574 INFO    Thread-20 :1212 [upload_job.py:push():143] Uploaded file C:\Users\alban\AppData\Local\Temp\tmphb739aziwandb\2mb1uj2x-wandb-metadata.json
+2022-12-04 16:13:33,905 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\wandb-metadata.json
+2022-12-04 16:13:33,905 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\wandb-summary.json
+2022-12-04 16:13:33,905 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\requirements.txt
+2022-12-04 16:13:48,246 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:13:48,246 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:13:59,043 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\config.yaml
+2022-12-04 16:14:03,410 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:14:03,410 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:14:18,564 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:14:18,564 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:14:19,192 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\output.log
+2022-12-04 16:14:21,206 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\output.log
+2022-12-04 16:14:33,048 DEBUG   SystemMonitor:1212 [system_monitor.py:_start():130] Starting system metrics aggregation loop
+2022-12-04 16:14:33,048 DEBUG   SenderThread:1212 [sender.py:send():303] send: stats
+2022-12-04 16:14:33,740 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:14:33,740 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:14:48,902 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:14:48,902 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:15:03,054 DEBUG   SenderThread:1212 [sender.py:send():303] send: stats
+2022-12-04 16:15:04,075 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: stop_status
+2022-12-04 16:15:04,075 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: stop_status
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send():303] send: exit
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_exit():442] handling exit code: 1
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_exit():444] handling runtime: 91
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_exit():450] send defer
+2022-12-04 16:15:04,232 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 0
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 0
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 1
+2022-12-04 16:15:04,232 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 1
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [system_monitor.py:finish():160] Stopping system monitor
+2022-12-04 16:15:04,232 DEBUG   SystemMonitor:1212 [system_monitor.py:_start():137] Finished system metrics aggregation loop
+2022-12-04 16:15:04,232 DEBUG   SystemMonitor:1212 [system_monitor.py:_start():141] Publishing last batch of metrics
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [interfaces.py:finish():173] Joined cpu
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [interfaces.py:finish():173] Joined disk
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [interfaces.py:finish():173] Joined memory
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [interfaces.py:finish():173] Joined network
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 1
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 2
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send():303] send: stats
+2022-12-04 16:15:04,232 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 2
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 2
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 3
+2022-12-04 16:15:04,232 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 3
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 3
+2022-12-04 16:15:04,232 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 4
+2022-12-04 16:15:04,232 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,232 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 4
+2022-12-04 16:15:04,232 DEBUG   SenderThread:1212 [sender.py:send():303] send: summary
+2022-12-04 16:15:04,247 INFO    SenderThread:1212 [sender.py:_save_file():1171] saving file wandb-summary.json with policy end
+2022-12-04 16:15:04,247 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,247 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 4
+2022-12-04 16:15:04,247 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 5
+2022-12-04 16:15:04,247 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,247 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 5
+2022-12-04 16:15:04,247 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,247 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 5
+2022-12-04 16:15:04,247 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 6
+2022-12-04 16:15:04,247 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:04,247 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 6
+2022-12-04 16:15:04,247 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:04,247 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 6
+2022-12-04 16:15:04,451 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\wandb-summary.json
+2022-12-04 16:15:05,183 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: poll_exit
+2022-12-04 16:15:05,466 INFO    Thread-17 :1212 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\output.log
+2022-12-04 16:15:06,254 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 7
+2022-12-04 16:15:06,261 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: poll_exit
+2022-12-04 16:15:06,261 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:06,261 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 7
+2022-12-04 16:15:06,261 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:06,261 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 7
+2022-12-04 16:15:06,261 INFO    SenderThread:1212 [dir_watcher.py:finish():362] shutting down directory watcher
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\output.log
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:finish():392] scan: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:finish():406] scan save: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\config.yaml config.yaml
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:finish():406] scan save: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\output.log output.log
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:finish():406] scan save: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\requirements.txt requirements.txt
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:finish():406] scan save: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\wandb-metadata.json wandb-metadata.json
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [dir_watcher.py:finish():406] scan save: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\wandb-summary.json wandb-summary.json
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 8
+2022-12-04 16:15:06,475 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:06,475 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 8
+2022-12-04 16:15:06,475 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 8
+2022-12-04 16:15:06,475 INFO    SenderThread:1212 [file_pusher.py:finish():168] shutting down file pusher
+2022-12-04 16:15:06,995 INFO    Thread-23 :1212 [upload_job.py:push():143] Uploaded file C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\requirements.txt
+2022-12-04 16:15:06,995 INFO    Thread-21 :1212 [upload_job.py:push():143] Uploaded file C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\config.yaml
+2022-12-04 16:15:06,995 INFO    Thread-22 :1212 [upload_job.py:push():143] Uploaded file C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\output.log
+2022-12-04 16:15:07,011 INFO    Thread-24 :1212 [upload_job.py:push():143] Uploaded file C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\files\wandb-summary.json
+2022-12-04 16:15:07,216 INFO    Thread-16 :1212 [sender.py:transition_state():463] send defer: 9
+2022-12-04 16:15:07,216 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:07,216 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 9
+2022-12-04 16:15:07,216 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:07,216 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 9
+2022-12-04 16:15:07,216 INFO    SenderThread:1212 [file_pusher.py:join():173] waiting for file pusher
+2022-12-04 16:15:07,216 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 10
+2022-12-04 16:15:07,216 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:07,216 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 10
+2022-12-04 16:15:07,216 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:07,216 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 10
+2022-12-04 16:15:07,641 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 11
+2022-12-04 16:15:07,641 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:07,641 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 11
+2022-12-04 16:15:07,641 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:07,641 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 11
+2022-12-04 16:15:07,641 INFO    SenderThread:1212 [sender.py:transition_state():463] send defer: 12
+2022-12-04 16:15:07,641 DEBUG   SenderThread:1212 [sender.py:send():303] send: final
+2022-12-04 16:15:07,641 DEBUG   SenderThread:1212 [sender.py:send():303] send: footer
+2022-12-04 16:15:07,641 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: defer
+2022-12-04 16:15:07,641 INFO    HandlerThread:1212 [handler.py:handle_request_defer():162] handle defer: 12
+2022-12-04 16:15:07,641 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: defer
+2022-12-04 16:15:07,641 INFO    SenderThread:1212 [sender.py:send_request_defer():459] handle sender defer: 12
+2022-12-04 16:15:07,641 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: poll_exit
+2022-12-04 16:15:07,641 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: poll_exit
+2022-12-04 16:15:07,641 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: server_info
+2022-12-04 16:15:07,641 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: get_summary
+2022-12-04 16:15:07,641 DEBUG   SenderThread:1212 [sender.py:send_request():317] send_request: server_info
+2022-12-04 16:15:07,641 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: sampled_history
+2022-12-04 16:15:07,956 INFO    MainThread:1212 [wandb_run.py:_footer_history_summary_info():3377] rendering history
+2022-12-04 16:15:07,956 INFO    MainThread:1212 [wandb_run.py:_footer_history_summary_info():3409] rendering summary
+2022-12-04 16:15:07,956 INFO    MainThread:1212 [wandb_run.py:_footer_sync_info():3333] logging synced files
+2022-12-04 16:15:07,956 DEBUG   HandlerThread:1212 [handler.py:handle_request():139] handle_request: shutdown
+2022-12-04 16:15:07,956 INFO    HandlerThread:1212 [handler.py:finish():814] shutting down handler
+2022-12-04 16:15:08,649 INFO    WriterThread:1212 [datastore.py:close():279] close: C:\Users\alban\PycharmProjects\FDL\Kaggle\wandb\run-20221204_161327-3hkwgu98\run-3hkwgu98.wandb
+2022-12-04 16:15:08,965 INFO    SenderThread:1212 [sender.py:finish():1331] shutting down sender
+2022-12-04 16:15:08,965 INFO    SenderThread:1212 [file_pusher.py:finish():168] shutting down file pusher
+2022-12-04 16:15:08,965 INFO    SenderThread:1212 [file_pusher.py:join():173] waiting for file pusher
+2022-12-04 16:15:08,972 INFO    MainThread:1212 [internal.py:handle_exit():78] Internal process exited

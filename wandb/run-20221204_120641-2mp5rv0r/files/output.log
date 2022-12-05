@@ -1,0 +1,196 @@
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+├─IntermediateLayerGetter: 1-1           [[-1, 2048, 25, 19]]      --
+|    └─Conv2d: 2-1                       [-1, 64, 100, 75]         9,408
+|    └─BatchNorm2d: 2-2                  [-1, 64, 100, 75]         128
+|    └─ReLU: 2-3                         [-1, 64, 100, 75]         --
+|    └─MaxPool2d: 2-4                    [-1, 64, 50, 38]          --
+|    └─Sequential: 2-5                   [-1, 256, 50, 38]         --
+|    |    └─Bottleneck: 3-1              [-1, 256, 50, 38]         75,008
+|    |    └─Bottleneck: 3-2              [-1, 256, 50, 38]         70,400
+|    |    └─Bottleneck: 3-3              [-1, 256, 50, 38]         70,400
+|    └─Sequential: 2-6                   [-1, 512, 25, 19]         --
+|    |    └─Bottleneck: 3-4              [-1, 512, 25, 19]         379,392
+|    |    └─Bottleneck: 3-5              [-1, 512, 25, 19]         280,064
+|    |    └─Bottleneck: 3-6              [-1, 512, 25, 19]         280,064
+|    |    └─Bottleneck: 3-7              [-1, 512, 25, 19]         280,064
+|    └─Sequential: 2-7                   [-1, 1024, 25, 19]        --
+|    |    └─Bottleneck: 3-8              [-1, 1024, 25, 19]        1,512,448
+|    |    └─Bottleneck: 3-9              [-1, 1024, 25, 19]        1,117,184
+|    |    └─Bottleneck: 3-10             [-1, 1024, 25, 19]        1,117,184
+|    |    └─Bottleneck: 3-11             [-1, 1024, 25, 19]        1,117,184
+|    |    └─Bottleneck: 3-12             [-1, 1024, 25, 19]        1,117,184
+|    |    └─Bottleneck: 3-13             [-1, 1024, 25, 19]        1,117,184
+|    └─Sequential: 2-8                   [-1, 2048, 25, 19]        --
+|    |    └─Bottleneck: 3-14             [-1, 2048, 25, 19]        6,039,552
+|    |    └─Bottleneck: 3-15             [-1, 2048, 25, 19]        4,462,592
+|    |    └─Bottleneck: 3-16             [-1, 2048, 25, 19]        4,462,592
+├─DeepLabHead: 1-2                       [-1, 21, 25, 19]          --
+|    └─ASPP: 2-9                         [-1, 256, 25, 19]         --
+|    |    └─Sequential: 3-17             [-1, 256, 25, 19]         328,192
+|    └─Conv2d: 2-10                      [-1, 256, 25, 19]         589,824
+|    └─BatchNorm2d: 2-11                 [-1, 256, 25, 19]         512
+|    └─ReLU: 2-12                        [-1, 256, 25, 19]         --
+|    └─Conv2d: 2-13                      [-1, 21, 25, 19]          5,397
+├─FCNHead: 1-3                           [-1, 21, 25, 19]          --
+|    └─Conv2d: 2-14                      [-1, 256, 25, 19]         2,359,296
+|    └─BatchNorm2d: 2-15                 [-1, 256, 25, 19]         512
+|    └─ReLU: 2-16                        [-1, 256, 25, 19]         --
+|    └─Dropout: 2-17                     [-1, 256, 25, 19]         --
+|    └─Conv2d: 2-18                      [-1, 21, 25, 19]          5,397
+==========================================================================================
+Total params: 26,797,162
+Trainable params: 26,797,162
+Non-trainable params: 0
+Total mult-adds (G): 11.90
+==========================================================================================
+Input size (MB): 0.34
+Forward/backward pass size (MB): 205.08
+Params size (MB): 102.22
+Estimated Total Size (MB): 307.65
+==========================================================================================
+*****************************training*************************
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.3073882460594177
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.10866381227970123
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.6609545350074768
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.02754625491797924
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.008980722166597843
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.0024740868248045444
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.0006655671168118715
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.00012870390492025763
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.00015685595280956477
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.00010010427649831399
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.0001538401993457228
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 0.00013519488857127726
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 7.3065079959633294e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 7.1929853220353834e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.335575300094206e-05
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 3.759580067708157e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.1938590432691853e-05
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.986892311833799e-05
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 7.919355994090438e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 4.863721642323071e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.9547045414801687e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 5.289603450364666e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 4.449916104931617e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 6.110357844590908e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 3.820233359874692e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 5.481543212226825e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.8491715511336224e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 7.856575621190132e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 3.5754583223024383e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 6.542525170516456e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.337710384381353e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.6509432043676497e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.6908903717194335e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 9.83870449999813e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.39638012544674e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 7.217721531560528e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.2007238840160426e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 4.776446530740941e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.3907812217439641e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 5.931166242589825e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 3.322061957078404e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 7.282902743099839e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.3267842859931989e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.34357242131955e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.515379946999019e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 6.688209850835847e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 2.0968093394913012e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 3.3602685789446696e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 5.197918540034152e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 4.0039373061517836e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.5238391597449663e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 9.842485582112204e-08
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 4.047321056077635e-07
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 1.9792255443462636e-06
+Img and lbl size are (torch.Size([4, 3, 200, 150]), torch.Size([4, 200, 150]))
+Loss is 3.523429938923073e-07
+Img and lbl size are (torch.Size([1, 3, 200, 150]), torch.Size([200, 150]))
+Traceback (most recent call last):
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 585, in <module>
+    Net.fit()
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 467, in fit
+    train_loss_mean = self.__train_model()
+  File "C:\Users\alban\PycharmProjects\FDL\Kaggle\main.py", line 402, in __train_model
+    outputs = self.model(img_batch)['out']
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torchvision\models\segmentation\_utils.py", line 27, in forward
+    x = self.classifier(x)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\container.py", line 204, in forward
+    input = module(input)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torchvision\models\segmentation\deeplabv3.py", line 111, in forward
+    _res.append(conv(x))
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torchvision\models\segmentation\deeplabv3.py", line 81, in forward
+    x = mod(x)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\modules\batchnorm.py", line 171, in forward
+    return F.batch_norm(
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\functional.py", line 2448, in batch_norm
+    _verify_batch_size(input.size())
+  File "C:\Users\alban\PycharmProjects\FDL\venv\lib\site-packages\torch\nn\functional.py", line 2416, in _verify_batch_size
+    raise ValueError("Expected more than 1 value per channel when training, got input size {}".format(size))
+ValueError: Expected more than 1 value per channel when training, got input size torch.Size([1, 256, 1, 1])
