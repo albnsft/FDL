@@ -19,8 +19,8 @@ from imutils import paths
 from torchsummary import summary
 from typing import List, Union
 
-#For optimization of hyperparameters
-#pip install ray[tune]
+# For optimization of hyperparameters
+# pip install ray[tune]
 from ray import tune
 from ray.tune import CLIReporter
 from ray.tune.schedulers import ASHAScheduler
@@ -46,7 +46,7 @@ class Param:
         mask = os.path.join(dataset, "train_masks")
         test = os.path.join(dataset, "test_images")
         # define the path to the outputs
-        model = os.path.join(base, "output")
+        model = os.path.join(base, "models")
         # define the path of the data analysis
         mydata = os.path.join(base, "mydata")
         # load the image and mask filepaths in a sorted manner
@@ -92,7 +92,7 @@ class Param:
         val_split: float = 0.15
         classes: int = None
         lr: float = 0.01
-        epochs: int = 3
+        epochs: int = 2
         batch_size: int = 16
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         criterion: str = 'Dice'
@@ -290,8 +290,9 @@ class Data:
     This class allows to create the true datasets and dataloaders for both training and validation
     """
 
-    def __init__(self, param:Param):
+    def __init__(self, param: Param, hyperopt: bool = True):
         self.param = param
+        self.hyperopt = hyperopt
         self.path_train_images, self.path_val_images, self.path_train_masks, self.path_val_masks = Analysis.split()
         self.path_test_images = self.param.Path.list_test
         self.main()
@@ -303,7 +304,7 @@ class Data:
         """
         global transform
         transform = Transform(self.param)
-        print('The training and validation images set are now transformed with Normalization')
+        if not self.hyperopt: print('The training and validation images set are now transformed with Normalization')
         self.trainset = SegmentationDataset(image_paths=self.path_train_images, mask_paths=self.path_train_masks,
                                             transform_image=transform.image, transform_mask=transform.mask)
         self.valset = SegmentationDataset(image_paths=self.path_val_images, mask_paths=self.path_val_masks,
@@ -315,18 +316,18 @@ class Data:
         Instanciation of train dataloader and val dataloader
         """
         self.train_dataloader = DataLoader(self.trainset, shuffle=True,
-                                           batch_size=Param.Model.batch_size)#, num_workers=os.cpu_count())
+                                           batch_size=Param.Model.batch_size)  # , num_workers=os.cpu_count())
         self.val_dataloader = DataLoader(self.valset, shuffle=False,
-                                         batch_size=Param.Model.batch_size)#, num_workers=os.cpu_count())
+                                         batch_size=Param.Model.batch_size)  # , num_workers=os.cpu_count())
         self.test_dataloader = DataLoader(self.testset, shuffle=False,
-                                          batch_size=len(self.testset))#, num_workers=os.cpu_count())
+                                          batch_size=len(self.testset))  # , num_workers=os.cpu_count())
 
     def original_size(self):
         """
         Methods allowing to save the original size of each testing image in order to submit predicted mask having the same size
         """
         path = os.path.join(Param.Path.mydata, 'size_test_images.pkl')
-        print('Storing the original test image size for the prediction submission')
+        if not self.hyperopt: print('Storing the original test image size for the prediction submission')
         try:
             self.test_size = pickle.load(open(path, 'rb'))
         except FileNotFoundError:
@@ -334,18 +335,18 @@ class Data:
             pickle.dump(self.test_size, open(path, 'wb'))
 
     def main(self):
-        print('*' * 50)
-        print('*' * 20 + 'DataInstanciation' + '*' * 20)
+        if not self.hyperopt:
+            print('*' * 50)
+            print('*' * 20 + 'DataInstanciation' + '*' * 20)
         self.set_dataset()
         self.set_dataloader()
         self.original_size()
-        """
-        print('Plotting examples of X - Y from training set')
-        for i in range(5):
-            image, mask = self.trainset[i]
-            Utils.plot(image, mask)
-        """
-        print('*' * 50)
+        if not self.hyperopt:
+            print('Plotting examples of X - Y from training set')
+            for i in range(5):
+                image, mask = self.trainset[i]
+                Utils.plot(image, mask)
+        if not self.hyperopt: print('*' * 50)
 
 
 class DiceLoss(nn.Module):
@@ -422,6 +423,7 @@ class ImageSegmentation:
     """
     This class allows to compute the main methods to fit a model and predict output on testing set
     """
+
     def __init__(self, model, param: Param, data: Data, wandb=None, save: bool = True, name: str = None,
                  verbose: bool = True, hyperopt: bool = True):
         self.param_model = param.Model
@@ -526,7 +528,7 @@ class ImageSegmentation:
                 epoch, time.time() - start_time, train_loss_mean, train_acc_mean, val_loss_mean, val_acc_mean))
         self.wandb.log({"train_loss": train_loss_mean, "val_loss": val_loss_mean, "val_acc": val_acc_mean})
 
-    def fit(self, checkpoint_dir=None):
+    def fit(self):
         if not self.hyperopt:
             my_first_es = FirstEarlyStopping()
             my_snd_es = SecondEarlyStopping()
@@ -549,12 +551,7 @@ class ImageSegmentation:
                 tune.report(train_loss=train_loss_mean, train_acc=train_acc_mean, val_loss=val_loss_mean, val_acc=val_acc_mean)
 
             if self.save:
-                if not self.hyperopt:
-                    torch.save(self.model.state_dict(), f'{self.path}/model_{epoch}.pt')
-                else:
-                    with tune.checkpoint_dir(epoch) as checkpoint_dir:
-                        path = os.path.join(checkpoint_dir, "checkpoint")
-                        torch.save((self.model.state_dict(), self.optimizer.state_dict()), path)
+                torch.save(self.model.state_dict(), f'{self.path}/model_{epoch}.pt')
 
         if not self.hyperopt:
             if break_it:
@@ -568,15 +565,11 @@ class ImageSegmentation:
         """
         Allows to predict all the masks from a dataloader or just one mask for a specific image from a dataset
         """
-        assert (isinstance(data, Dataset) and isinstance(index_image, int))
-        if not self.hyperopt:
-            if self.best_epoch is not None:
-                epoch = self.best_epoch
-            else:
-                epoch = Utils.find_last_epoch(self.path)
-            self.model = Utils.load_model(self.model, epoch, self.path, self.param_model.device)
+        if self.best_epoch is not None:
+            epoch = self.best_epoch
         else:
-            self.model = Utils.load_model(self.model, None, self.path, self.param_model.device)
+            epoch = Utils.find_last_epoch(self.path)
+        self.model = Utils.load_model(self.model, epoch, self.path, self.param_model.device)
         loss_mean, acc_mean, predictions = self.__evaluate_model(data, index_image)
         if self.verbose:
             if loss_mean is not None:
@@ -591,6 +584,16 @@ class ImageSegmentation:
                 return resized_predictions
 
 
+@dataclass
+class HPanalysis:
+    """
+    This class allows to get the wanted attributes from the analysis of the tune.run method
+    Indeed saving (with a pickle) directly the analysis creates error when using other laptop with different paths
+    """
+    trial_dataframes: dict
+    results: dict
+
+
 class HyperOptImageSegmentation:
     """
     This class hyper-optimize the parameters on the validation set
@@ -599,10 +602,13 @@ class HyperOptImageSegmentation:
     def __init__(
             self,
             trials_hopt: int = 2,  # Number of Trials of hyper optimization
-            tolerance_es: int = 1,  # Tolerance of early stopping
+            tolerance_es: int = 1, # Tolerance of early stopping
+            epochs: int = None
     ):
         self.trials_hopt = trials_hopt
         self.tolerance_es = tolerance_es
+        self.epochs = epochs
+        self.metric = "val_loss"
 
     @property
     def search_space(self):
@@ -621,7 +627,7 @@ class HyperOptImageSegmentation:
         ASHAScheduler terminate bad performing trials early
         Uses a metric as the training result objective value attribute
         """
-        return ASHAScheduler(metric="val_loss", mode='min', max_t=Param.Model.epochs, grace_period=1,
+        return ASHAScheduler(metric=self.metric, mode='min', max_t=self.epochs, grace_period=1,
                              reduction_factor=2)
 
     @property
@@ -641,24 +647,46 @@ class HyperOptImageSegmentation:
                                   verbose=False, hyperopt=True)
         return data, model
 
-    def fit(self, config, checkpoint_dir=None, model=None, param=None, save: bool = True, name: str = None):
+    def fit(self, config, model=None, param=None, save: bool = True, name: str = None):
         data, model = self.instantiation(config, model, param, save, name)
-        model.fit(checkpoint_dir)
+        model.fit()
+
+    def find_epoch(self, analysis, metric, path):
+        epoch = analysis.trial_dataframes[path][metric].iloc[self.tolerance_es:].idxmin()
+        return epoch, analysis.trial_dataframes[path][metric].loc[epoch]
+
+    def loop_trials(self, analysis, metric, path_trials, name_trials):
+        best_metric = 1
+        best_trial, best_config, best_epoch = None, {}, 0
+        for path, name in zip(path_trials, name_trials):
+            try:
+                epoch, metric_result = self.find_epoch(analysis, metric, path)
+            except ValueError:
+                epoch = 0  # this trial has not enough epochs for the early stopping
+                metric_result = 1
+            if metric_result < best_metric:
+                best_metric = metric_result
+                best_epoch = epoch
+                best_trial = name
+                best_config = analysis.results[name]['config']
+        return best_metric, best_trial, best_config, best_epoch
 
     def get_best_trial(self, analysis=None):
         """
-        Method that allows to find the trial which minimize the validation loss
+        Method that allows to browse all the trials of an analysis and in each trials browse all progress (epochs)
+        The aim is to find the trial and the epoch which minimize the validation loss
         """
-        best_trial = analysis.get_best_trial("val_loss", "min", "last")
-        config = best_trial.config
-        loss = best_trial.last_result["val_loss"]
-        acc = best_trial.last_result["val_acc"]
-        checkpoint = best_trial.checkpoint.value
+        path_trials = list(analysis.trial_dataframes.keys())
+        name_trials = list(analysis.results.keys())
+        best_metric, best_trial, best_config, best_epoch = self.loop_trials(analysis, self.metric,
+                                                                            path_trials,
+                                                                            name_trials)
+        best_config["epoch"] = best_epoch
 
-        print(f"Best trial config: {config}")
-        print(f"Best trial final validation loss: {loss}")
-        print(f"Best trial final validation accuracy: {acc}")
-        return config, checkpoint
+        print(f'Best trial: {best_trial}')
+        print(f"Best trial final validation loss: {best_metric}")
+        print(f'The configuration of this trial is: {best_config}')
+        return best_config
 
     def call(self, model, param, save: bool = True, name: str = None):
         path = os.path.join(param.Path.mydata, f'HyperOpt_{name}.pkl')
@@ -678,14 +706,15 @@ class HyperOptImageSegmentation:
                 progress_reporter=self.reporter,
                 name=name
             )
+            analysis = HPanalysis(analysis.trial_dataframes, analysis.results)
             pickle.dump(analysis, open(path, 'wb'))
         """
         Testing with the best parameters
         """
-        config, checkpoint = self.get_best_trial(analysis)
-        print(checkpoint)
+        config = self.get_best_trial(analysis)
+        print(param)
         data, model = self.instantiation(config, model, param, save, name)
-        model.path = checkpoint
+        model.best_epoch = config["epoch"]
         pred_mask_test = model.predict(data.test_dataloader)
         # saving these final predictions
         pickle.dump(pred_mask_test, open(f'{model.path}/final_predictions.pkl', 'wb'))
@@ -773,15 +802,16 @@ class Utils:
 
     @staticmethod
     def load_model(model, epoch, path, device):
-        path_ = f'{path}/model_{epoch}.pt' if epoch is None else path
+        path_ = f'{path}/model_{epoch}.pt' if epoch is not None else path
         if device.type == 'cpu':
             model.load_state_dict(torch.load(path_, map_location=torch.device('cpu')))
         else:
             model.load_state_dict(torch.load(path_))
         return model
 
+
 def main(model, param, name):
-    data = Data(param)
+    data = Data(param, hyperopt=False)
     Utils.wandb_connect()
     hyperparams = {"Batch size": Param.Model.batch_size,
                    "Learning rate": Param.Model.lr,
@@ -802,13 +832,13 @@ def main(model, param, name):
     # saving these final predictions
     pickle.dump(pred_mask_test, open(f'{Net.path}/final_predictions.pkl', 'wb'))
 
+
 def main_hyperopt(model, name, param):
-    HyperOptNet = HyperOptImageSegmentation()
+    HyperOptNet = HyperOptImageSegmentation(epochs=param.Model.epochs)
     HyperOptNet.call(model=model, param=param, name=name, save=True)
 
 
 if __name__ == '__main__':
-
     param = Param
     analysis = Analysis()
 
@@ -831,6 +861,6 @@ if __name__ == '__main__':
     main_hyperopt(model, encoder, param)
 
     """ Using this model without hyperoptimisation"""
-    main(model, encoder, param)
+    #main(model, encoder, param)
 
     print('end')
