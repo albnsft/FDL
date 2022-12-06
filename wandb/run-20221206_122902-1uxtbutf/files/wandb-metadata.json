@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.9.13",
+    "heartbeatAt": "2022-12-06T11:29:04.054715",
+    "startedAt": "2022-12-06T11:29:02.640669",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:/Users/alban/PycharmProjects/FDL/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": null,
+        "commit": "a1b92fba8c3d322da64db6884869b17f0060895d"
+    },
+    "email": "albansarfati@gmail.com",
+    "root": "C:/Users/alban/PycharmProjects/FDL",
+    "host": "LAPTOP-T4QGB0N7",
+    "username": "alban",
+    "executable": "C:\\Users\\alban\\PycharmProjects\\FDL\\venv\\Scripts\\python.exe",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 3301.0,
+        "min": 0.0,
+        "max": 3301.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3301.0,
+            "min": 0.0,
+            "max": 3301.0
+        }
+    ],
+    "disk": {
+        "total": 930.4260902404785,
+        "used": 186.43207550048828
+    },
+    "memory": {
+        "total": 15.406242370605469
+    }
+}
