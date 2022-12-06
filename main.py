@@ -91,8 +91,8 @@ class Param:
     class Model:
         val_split: float = 0.15
         classes: int = None
-        lr: float = 0.01
-        epochs: int = 2
+        lr: float = 0.001
+        epochs: int = 10
         batch_size: int = 16
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         criterion: str = 'Dice'
@@ -172,12 +172,12 @@ class Analysis:
         self.main()
 
     @staticmethod
-    def split():
+    def split(param: Param = Param, verbose: bool = True):
         """
         Partition the data into training and validation splits using the parameters (split, list_image,etc) from Param
         """
-        print(f'Partition the data into training and validation splits using a split of {Param.Model.val_split}')
-        return train_test_split(Param.Path.list_image, Param.Path.list_mask, test_size=Param.Model.val_split,
+        if verbose: (f'Partition the data into training and validation splits using a split of {param.Model.val_split}')
+        return train_test_split(param.Path.list_image, param.Path.list_mask, test_size=param.Model.val_split,
                                 random_state=42)
 
     def listloading(self):
@@ -290,10 +290,10 @@ class Data:
     This class allows to create the true datasets and dataloaders for both training and validation
     """
 
-    def __init__(self, param: Param, hyperopt: bool = True):
+    def __init__(self, param: Param, verbose: bool = True):
         self.param = param
-        self.hyperopt = hyperopt
-        self.path_train_images, self.path_val_images, self.path_train_masks, self.path_val_masks = Analysis.split()
+        self.verbose = verbose
+        self.path_train_images, self.path_val_images, self.path_train_masks, self.path_val_masks = Analysis.split(self.param, self.verbose)
         self.path_test_images = self.param.Path.list_test
         self.main()
 
@@ -304,7 +304,7 @@ class Data:
         """
         global transform
         transform = Transform(self.param)
-        if not self.hyperopt: print('The training and validation images set are now transformed with Normalization')
+        if self.verbose: print('The training and validation images set are now transformed with Normalization')
         self.trainset = SegmentationDataset(image_paths=self.path_train_images, mask_paths=self.path_train_masks,
                                             transform_image=transform.image, transform_mask=transform.mask)
         self.valset = SegmentationDataset(image_paths=self.path_val_images, mask_paths=self.path_val_masks,
@@ -327,7 +327,7 @@ class Data:
         Methods allowing to save the original size of each testing image in order to submit predicted mask having the same size
         """
         path = os.path.join(Param.Path.mydata, 'size_test_images.pkl')
-        if not self.hyperopt: print('Storing the original test image size for the prediction submission')
+        if self.verbose: print('Storing the original test image size for the prediction submission')
         try:
             self.test_size = pickle.load(open(path, 'rb'))
         except FileNotFoundError:
@@ -335,18 +335,18 @@ class Data:
             pickle.dump(self.test_size, open(path, 'wb'))
 
     def main(self):
-        if not self.hyperopt:
+        if self.verbose:
             print('*' * 50)
             print('*' * 20 + 'DataInstanciation' + '*' * 20)
         self.set_dataset()
         self.set_dataloader()
         self.original_size()
-        if not self.hyperopt:
+        if self.verbose:
             print('Plotting examples of X - Y from training set')
             for i in range(5):
                 image, mask = self.trainset[i]
                 Utils.plot(image, mask)
-        if not self.hyperopt: print('*' * 50)
+        if self.verbose: print('*' * 50)
 
 
 class DiceLoss(nn.Module):
@@ -424,8 +424,8 @@ class ImageSegmentation:
     This class allows to compute the main methods to fit a model and predict output on testing set
     """
 
-    def __init__(self, model, param: Param, data: Data, wandb=None, save: bool = True, name: str = None,
-                 verbose: bool = True, hyperopt: bool = True):
+    def __init__(self, model, param: Param, data: Data, wandb=None, save: bool = None, name: str = None,
+                 verbose: bool = None, hyperopt: bool = None):
         self.param_model = param.Model
         self.data = data
         self.wandb = wandb
@@ -577,10 +577,11 @@ class ImageSegmentation:
                 return predictions
             else:
                 """Resize the output to match the original mask dimensions"""
+                """This method is not working we have to find something else"""
                 resized_predictions = []
                 for (pred_mask, original_size) in zip(predictions, self.data.test_size):
                     resized_predictions.append(
-                        F.interpolate(pred_mask, (original_size.shape[0], original_size.shape[1])))
+                        F.interpolate(pred_mask, (original_size[0], original_size[1])))
                 return resized_predictions
 
 
@@ -601,8 +602,8 @@ class HyperOptImageSegmentation:
 
     def __init__(
             self,
-            trials_hopt: int = 2,  # Number of Trials of hyper optimization
-            tolerance_es: int = 1, # Tolerance of early stopping
+            trials_hopt: int = 10,  # Number of Trials of hyper optimization
+            tolerance_es: int = 10, # Tolerance of early stopping
             epochs: int = None
     ):
         self.trials_hopt = trials_hopt
@@ -638,20 +639,27 @@ class HyperOptImageSegmentation:
         return CLIReporter(
             metric_columns=["train_loss", "train_acc", "val_loss", "val_acc"])
 
-    def instantiation(self, config, model, param, save: bool = True, name: str = None):
+    def instantiation(self, config, model, param, save: bool = False, name: str = None,
+                      verbose: bool=False, hyperopt: bool = True, wandb=None):
+        """
+        Instantiation of the model + data with the parameters given by the config
+        save=False, Not saving each model tries by the hyperopt, takes too much memory
+        Will just save the best model
+        """
         param.Model.lr = config['lr']
         param.Model.batch_size = config['batch_size']
         param.Model.optimizer = config['optimizer']
-        data = Data(param)
-        model = ImageSegmentation(model, param, data, wandb=None, save=save, name=name,
-                                  verbose=False, hyperopt=True)
+        if 'epoch' in config: param.Model.epoch = config["epoch"]
+        data = Data(param, verbose=False)
+        model = ImageSegmentation(model, param, data, wandb=wandb, save=save, name=name, verbose=verbose, hyperopt=hyperopt)
         return data, model
 
-    def fit(self, config, model=None, param=None, save: bool = True, name: str = None):
+    def fit(self, config, model=None, param=None, save: bool = False, name: str = None):
         data, model = self.instantiation(config, model, param, save, name)
         model.fit()
 
     def find_epoch(self, analysis, metric, path):
+        """Scrap the dataframe of results to find the best epoch"""
         epoch = analysis.trial_dataframes[path][metric].iloc[self.tolerance_es:].idxmin()
         return epoch, analysis.trial_dataframes[path][metric].loc[epoch]
 
@@ -688,7 +696,7 @@ class HyperOptImageSegmentation:
         print(f'The configuration of this trial is: {best_config}')
         return best_config
 
-    def call(self, model, param, save: bool = True, name: str = None):
+    def main(self, model, param, save: bool = True, name: str = None):
         path = os.path.join(param.Path.mydata, f'HyperOpt_{name}.pkl')
         """
         Training and Validation
@@ -706,18 +714,35 @@ class HyperOptImageSegmentation:
                 progress_reporter=self.reporter,
                 name=name
             )
+            """Saving the results of he hyperoptimization"""
             analysis = HPanalysis(analysis.trial_dataframes, analysis.results)
             pickle.dump(analysis, open(path, 'wb'))
+
         """
         Testing with the best parameters
         """
+        #getting the configuration
         config = self.get_best_trial(analysis)
-        print(param)
-        data, model = self.instantiation(config, model, param, save, name)
-        model.best_epoch = config["epoch"]
+        #give a name to the best hyperopt
+        name = name + "__".join([str(k)+'_'+str(v) for k, v in config.items()])
+        #connect wandb
+        Utils.wandb_connect()
+        hyperparams = {"Batch size": config['batch_size'],
+                       "Learning rate": config['lr'],
+                       "Epochs": config['epoch'],
+                       "Optimizer": config['optimizer']}
+        wandb.init(config=hyperparams, project="DL_project", name=name)
+        #instantiate the model with this config
+        data, model = self.instantiation(config, model, param, wandb=wandb, save=True, name=name, hyperopt=False, verbose=True)
+        #Fitting of the model + saving it
+        model.fit()
+        """
+        ***********Not working for now************
+        ****Have to Resize correctly the output to match the original mask dimensions****
         pred_mask_test = model.predict(data.test_dataloader)
         # saving these final predictions
         pickle.dump(pred_mask_test, open(f'{model.path}/final_predictions.pkl', 'wb'))
+        """
 
 
 class Utils:
@@ -811,7 +836,7 @@ class Utils:
 
 
 def main(model, param, name):
-    data = Data(param, hyperopt=False)
+    data = Data(param, verbose=True)
     Utils.wandb_connect()
     hyperparams = {"Batch size": Param.Model.batch_size,
                    "Learning rate": Param.Model.lr,
@@ -819,23 +844,25 @@ def main(model, param, name):
     wandb.init(config=hyperparams, project="DL_project", name=name)
 
     # Instanciation of the model
-    Net = ImageSegmentation(model, param, data, wandb, name=name)
+    Net = ImageSegmentation(model, param, data, wandb, name=name, save=True, verbose=True, hyperopt=False)
     # Fitting the model (training + validation)
     Net.fit()
     # Doing prediction on the first image of the validation
     pred_mask_val = Net.predict(data.valset, index_image=0)
     image, mask = data.valset[0]
     Utils.plot_pred(image, mask, pred_mask_val[0])
+    """
     # Doing the final predictions on the testing dataloader
     # HAS TO RESIZE TO ORIGINAL HEIGHT AND WIDTH
     pred_mask_test = Net.predict(data.test_dataloader)
     # saving these final predictions
     pickle.dump(pred_mask_test, open(f'{Net.path}/final_predictions.pkl', 'wb'))
+    """
 
 
-def main_hyperopt(model, name, param):
+def main_hyperopt(model, param, name):
     HyperOptNet = HyperOptImageSegmentation(epochs=param.Model.epochs)
-    HyperOptNet.call(model=model, param=param, name=name, save=True)
+    HyperOptNet.main(model=model, param=param, name=name)
 
 
 if __name__ == '__main__':
@@ -858,9 +885,9 @@ if __name__ == '__main__':
         activation=None,
     )
     """ Using this model with hyperoptimisation of parameters (batch_size, optimizer, learning_rate)"""
-    main_hyperopt(model, encoder, param)
+    #main_hyperopt(model, param, encoder)
 
     """ Using this model without hyperoptimisation"""
-    #main(model, encoder, param)
+    main(model, param, encoder)
 
-    print('end')
+    print('End')
