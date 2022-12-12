@@ -9,7 +9,7 @@ import wandb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision.transforms as trans
+import torchvision.transforms as T
 from torch.utils.data.dataset import Dataset
 from torch.utils.data import DataLoader
 from torch.optim import Adam, SGD
@@ -18,6 +18,15 @@ from dataclasses import dataclass
 from imutils import paths
 from torchsummary import summary
 from typing import List, Union
+
+#for better transformations
+import albumentations as A
+
+""" Trying transfer learning using Segmentation Models library
+Segmentation Models library is widely used in the image segmentation competitions"""
+# https://github.com/qubvel/segmentation_models.pytorch
+# Notebook example: https://github.com/qubvel/segmentation_models.pytorch/blob/master/examples/cars%20segmentation%20(camvid).ipynb
+import segmentation_models_pytorch as smp
 
 # For optimization of hyperparameters
 # pip install ray[tune]
@@ -57,8 +66,8 @@ class Param:
     @dataclass
     class Image:
         channels: int = None
-        height: int = None
-        width: int = None
+        height: int = 1024 #new height to resize the high resolution image
+        width: int = 1024 #new width to resize the high resolution image
         mean: torch.tensor = None
         std: torch.tensor = None
         classes = {0: 'Background',  # each key represents the pixel value of the class associated
@@ -90,72 +99,99 @@ class Param:
     @dataclass
     class Model:
         val_split: float = 0.15
-        classes: int = None
+        classes: int = 25
         lr: float = 0.001
-        epochs: int = 10
+        epochs: int = 20
         batch_size: int = 16
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         criterion: str = 'Dice'
         optimizer: str = 'Adam'
 
 
-@dataclass
 class Transform:
     """
-    This class allows to do the main transformations on the images and mask dataset
-    Using torchvision.transforms
-    For
+    This class allows to do the main transformations, augmentation and preprocessing on the images and mask dataset
+    Using torchvision.transforms and abumentation
     """
 
-    def __init__(self, param: Param = None):
+    def __init__(self, param: Param = None, preprocessing_fn=None):
         self.param_image = param.Image
-        self.main()
+        self.preprocessing = preprocessing_fn #when using segmentation_models_pytorch models have pretrained encoders,
+        # so have to prepare data the same way as during weights pretraining
+        self.set_args()
 
-    def main(self):
-        self.mask = trans.Compose([
-            trans.ToPILImage(),
-            trans.Resize((self.param_image.height, self.param_image.width), interpolation=cv2.INTER_NEAREST),
-            trans.ToTensor()
+    def set_args(self):
+        #common transformation to load and resize image and mask with torchvision.transforms
+        self.common = T.Compose([
+            T.ToPILImage(),
+            T.Resize((self.param_image.height, self.param_image.width), interpolation=cv2.INTER_NEAREST),
+            T.ToTensor()
         ])
+        #instanciation of training augmentation with albumentation
+        self.train_augmentation = A.Compose([
+            A.Resize(self.param_image.height, self.param_image.width, interpolation=cv2.INTER_NEAREST),
+            A.HorizontalFlip(),
+            A.VerticalFlip(),
+            A.RandomCrop(int(self.param_image.height/2), int(self.param_image.width/2)),
+            A.GridDistortion(p=0.2),
+            A.RandomBrightnessContrast((0,0.5),(0,0.5)),
+            A.GaussNoise()
+        ])
+        #instanciation of validation augmentation with albumentation
+        self.val_augmentation = A.Compose([
+            A.Resize(self.param_image.height, self.param_image.width, interpolation=cv2.INTER_NEAREST)])
+        #instanciation of prepocessing if needed
+        if not self.preprocessing is None:
+            self.preprocessing = A.Compose([A.Lambda(image=self.preprocessing)])
+        #instanciation od normalization and denorm
         if not self.param_image.mean is None:
-            self.image = trans.Compose([
-                trans.ToPILImage(),
-                trans.Resize((self.param_image.height, self.param_image.width), interpolation=cv2.INTER_NEAREST),
-                trans.ToTensor(),
-                trans.Normalize(self.param_image.mean, self.param_image.std)
+            #normalize an image
+            self.normalize = T.Compose([
+                T.ToTensor(),
+                T.Normalize(self.param_image.mean, self.param_image.std)
             ])
-            self.denormalize = trans.Compose([
-                trans.Normalize(mean=[0., 0., 0.], std=1 / self.param_image.std),
-                trans.Normalize(mean=-self.param_image.mean, std=[1., 1., 1.])
+            #denormalize an image
+            self.denormalize = T.Compose([
+                T.ToPILImage(),
+                T.ToTensor(),
+                T.Normalize(mean=[0., 0., 0.], std=1 / self.param_image.std),
+                T.Normalize(mean=-self.param_image.mean, std=[1., 1., 1.])
             ])
 
 
 class SegmentationDataset(Dataset):
-    def __init__(self, image_paths: List[str] = None, mask_paths: List[str] = None, transform_image=None,
-                 transform_mask=None):
+    def __init__(self, image_paths: List[str] = None, mask_paths: List[str] = None, common_transform=None,
+                 augmentation=None, preprocessing=None, normalize_transform=None):
         """
         Store the image/mask filepaths, and transformers
         """
         self.image_paths = image_paths
         self.mask_paths = mask_paths
-        self.transform_image = transform_image
-        self.transform_mask = transform_mask
+        self.common_transform = common_transform
+        self.augmentation = augmentation
+        self.normalize_transform = normalize_transform
+        self.preprocessing = preprocessing
 
     def __getitem__(self, index):
         # load the image from local disk and swap its channels from BGR to RGB
         image = cv2.imread(self.image_paths[index])
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        # load the mask associated in grayscale mode (if in training or validation, otherwise mask is just zero)
+        # load the mask associated in grayscale mode (if in training or validation, otherwise mask is just zero as unknown)
         if self.mask_paths is not None:
             mask = cv2.imread(self.mask_paths[index], 0)
         else:
             mask = torch.zeros(1)
-        # apply the transformations to both image and its mask if not None
-        if self.transform_image:
-            image = self.transform_image(image)
-        if self.transform_mask:
-            mask = self.transform_mask(mask)
-            mask = (mask * 255).int()  # as using ToTensor() convert data to [0,1] and we want mask pixels into [0,255]
+        if self.common_transform:
+            mask, image = self.common_transform(mask), self.common_transform(image)
+        if self.augmentation:
+            sample = self.augmentation(image=image, mask=mask)
+            image, mask = sample['image'], sample['mask']
+        if self.preprocessing:
+            sample = self.preprocessing(image=image, mask=mask)
+            image, mask = sample['image'], sample['mask']
+        if self.normalize_transform:
+            image = self.normalize_transform(image)
+        if isinstance(mask, np.ndarray): mask = torch.from_numpy(mask).long()
         return image, mask
 
     def __len__(self):
@@ -184,7 +220,7 @@ class Analysis:
         """
         Load the raw training images in a list in order to analyse the shapes
         """
-        shapes_train_images_path = os.path.join(Param.Path.mydata, 'shapes_train_images.pkl')
+        shapes_train_images_path = os.path.join(Param.Path.mydata, f'shapes_train_images_{Param.Image.height}.pkl')
         try:
             shapes_train_images = pd.read_pickle(shapes_train_images_path)
         except FileNotFoundError:
@@ -193,34 +229,6 @@ class Analysis:
                                                columns=['height', 'width', 'channel'])
             shapes_train_images.to_pickle(shapes_train_images_path)
         return shapes_train_images
-
-    @staticmethod
-    def resize(measure, threshold=200):
-        """
-        Allow to find the factor which decrease the size (width or height) until a certain threshold
-        Indeed too big size requires to much computation for the training
-        Then max width and height = threshold = 200
-        """
-        factor = 1
-        while measure / factor > threshold:
-            factor += 1
-        return 1 / factor
-
-    @staticmethod
-    def closest_number(n, m=32):
-        """
-        Expected image height and width must be divisible by 32 therefore this function allows to find the
-        closest number divisible by 32
-        """
-        q = int(n / m)
-        n1 = m * q
-        if ((n * m) > 0):
-            n2 = (m * (q + 1))
-        else:
-            n2 = (m * (q - 1))
-        if (abs(n - n1) < abs(n - n2)):
-            return n1
-        return n2
 
     def params_image(self):
         """
@@ -231,9 +239,6 @@ class Analysis:
         min_height = shapes_train_images['height'].min()  # 4000
         min_width = shapes_train_images['width'].min()  # 3000
         min_channel = shapes_train_images['channel'].min()
-        factor = self.resize(min_height)
-        Param.Image.height = self.closest_number(int(min_height * factor))
-        Param.Image.width = self.closest_number(int(min_width * factor))
         Param.Image.channels = min_channel
         print(f'The minimum height and width of training images are {(min_height, min_width)} \nAll images '
               f'have been resize to {(Param.Image.height, Param.Image.width)} in order to avoid computational error')
@@ -262,13 +267,13 @@ class Analysis:
 
     def set_metrics(self):
         """
-        Create the training set and loader without normalize transformation and with batch_size = len(all_data)
+        Create the training set and loader with common transformation and with batch_size = len(all_data)
         in order to get the mean and std of the training images for further normalize transformation
         """
         transform = Transform(Param)
 
         self.trainset = SegmentationDataset(image_paths=self.path_train_images, mask_paths=self.path_train_masks,
-                                            transform_image=transform.mask, transform_mask=transform.mask)
+                                            common_transform=transform.common)
         self.train_dataloader = DataLoader(self.trainset, shuffle=True,
                                            batch_size=len(self.trainset), num_workers=os.cpu_count())
         Param.Image.mean, Param.Image.std, Param.Model.classes = self.get_metrics(self.train_dataloader)
@@ -290,8 +295,9 @@ class Data:
     This class allows to create the true datasets and dataloaders for both training and validation
     """
 
-    def __init__(self, param: Param, verbose: bool = True):
+    def __init__(self, param: Param, transform: Transform, verbose: bool = True):
         self.param = param
+        self.transform = transform
         self.verbose = verbose
         self.path_train_images, self.path_val_images, self.path_train_masks, self.path_val_masks = Analysis.split(self.param, self.verbose)
         self.path_test_images = self.param.Path.list_test
@@ -299,17 +305,23 @@ class Data:
 
     def set_dataset(self):
         """
-        Instanciation of trainset and valset
-        Put the transform variable in global in order to reuse it through all the script
+        Instanciation of trainset with augmentation, preprocessing and normalization transformation
+        And the val set
         """
-        global transform
-        transform = Transform(self.param)
-        if self.verbose: print('The training and validation images set are now transformed with Normalization')
+        if self.verbose: print('The training set is now augmented and transformed with normalization'
+                               'The validation and testing set is just transformed with normalization')
         self.trainset = SegmentationDataset(image_paths=self.path_train_images, mask_paths=self.path_train_masks,
-                                            transform_image=transform.image, transform_mask=transform.mask)
+                                            augmentation=self.transform.train_augmentation,
+                                            normalize_transform=self.transform.normalize,
+                                            preprocessing=self.transform.preprocessing)
         self.valset = SegmentationDataset(image_paths=self.path_val_images, mask_paths=self.path_val_masks,
-                                          transform_image=transform.image, transform_mask=transform.mask)
-        self.testset = SegmentationDataset(image_paths=self.path_test_images, transform_image=transform.image)
+                                          augmentation=self.transform.val_augmentation,
+                                          normalize_transform=self.transform.normalize,
+                                          preprocessing=self.transform.preprocessing)
+        self.testset = SegmentationDataset(image_paths=self.path_test_images,
+                                           augmentation=self.transform.val_augmentation,
+                                           normalize_transform=self.transform.normalize,
+                                           preprocessing=self.transform.preprocessing)
 
     def set_dataloader(self):
         """
@@ -367,33 +379,7 @@ class DiceLoss(nn.Module):
         return torch.mean(1. - dice_score)
 
 
-class FirstEarlyStopping:
-    """
-    This class allow to :
-    Stop the training when the validation loss increase while training loss decrease
-    Useful to avoid overfitting
-    """
-
-    def __init__(
-            self,
-            tolerance: int = 10):
-
-        self.tolerance = tolerance
-        self.counter = 0
-        self.early_stop = False
-        self.previous_train_loss = 1e5
-        self.previous_val_loss = 1e5
-
-    def __call__(self, train_loss, val_loss):
-        if ((train_loss <= self.previous_train_loss) and (val_loss >= self.previous_val_loss)):
-            self.counter += 1
-            if self.counter >= self.tolerance:
-                self.early_stop = True
-        self.previous_train_loss = train_loss
-        self.previous_val_loss = val_loss
-
-
-class SecondEarlyStopping:
+class EarlyStopping:
     """
     This class allow to :
     Stop the training when the validation loss doesn't decrease anymore
@@ -460,6 +446,12 @@ class ImageSegmentation:
         else:
             raise ValueError(f'{self.param_model.optimizer} has not been implemented')
 
+    @staticmethod
+    def __transf_batch(img_batch, lbl_batch):
+        img_batch = img_batch.to(torch.float32)
+        lbl_batch = Utils.squeeze_generic(lbl_batch, [0])
+        return img_batch, lbl_batch
+
     def __train_model(self):
         # set the model in training mode
         self.model.train()
@@ -467,7 +459,7 @@ class ImageSegmentation:
         # loop over the training set
         for img_batch, lbl_batch in self.data.train_dataloader:
             # send input to device
-            lbl_batch = Utils.squeeze_generic(lbl_batch, [0])
+            img_batch, lbl_batch = self.__transf_batch(img_batch, lbl_batch)
             img_batch, lbl_batch = Utils.to_device((img_batch, lbl_batch), self.param_model.device)
             # zero out previous accumulated gradients
             self.optimizer.zero_grad()
@@ -492,7 +484,7 @@ class ImageSegmentation:
         for batch in data:
             # send input to device
             img_batch, lbl_batch = batch
-            lbl_batch = Utils.squeeze_generic(lbl_batch, [0])
+            img_batch, lbl_batch = self.__transf_batch(img_batch, lbl_batch)
             if len(img_batch.shape) == 3: img_batch = img_batch.unsqueeze(0)
             img_batch, lbl_batch = Utils.to_device((img_batch, lbl_batch), self.param_model.device)
             outputs = self.model(img_batch)
@@ -508,16 +500,11 @@ class ImageSegmentation:
         else:
             return None, None, predictions
 
-    def __compute_early_stopping(self, epoch, my_first_es, my_snd_es, train_loss_mean, val_loss_mean):
+    def __compute_early_stopping(self, epoch, my_es, val_loss_mean):
         break_it = False
-        my_first_es(train_loss_mean, val_loss_mean)
-        if my_first_es.early_stop:
-            print(f'At epoch {epoch}, the first early stopping tolerance = {my_first_es.tolerance} has been reached,'
-                  f' the model is overfitting -> stop it')
-            break_it = True
-        my_snd_es(val_loss_mean)
-        if my_snd_es.early_stop:
-            print(f'At epoch {epoch}, the second early stopping tolerance = {my_snd_es.tolerance} has been reached,'
+        my_es(val_loss_mean)
+        if my_es.early_stop:
+            print(f'At epoch {epoch}, the second early stopping tolerance = {my_es.tolerance} has been reached,'
                   f' the loss of validation is not decreasing anymore -> stop it')
             break_it = True
         return break_it
@@ -530,8 +517,7 @@ class ImageSegmentation:
 
     def fit(self):
         if not self.hyperopt:
-            my_first_es = FirstEarlyStopping()
-            my_snd_es = SecondEarlyStopping()
+            my_es = EarlyStopping()
 
         for epoch in range(1, self.param_model.epochs + 1):
             start_time = time.time()
@@ -539,7 +525,7 @@ class ImageSegmentation:
             val_loss_mean, val_acc_mean, _ = self.__evaluate_model(self.data.val_dataloader)
 
             if not self.hyperopt:
-                break_it = self.__compute_early_stopping(epoch, my_first_es, my_snd_es, train_loss_mean, val_loss_mean)
+                break_it = self.__compute_early_stopping(epoch, my_es, val_loss_mean)
                 if break_it:
                     break
                 if self.verbose:
@@ -555,7 +541,7 @@ class ImageSegmentation:
 
         if not self.hyperopt:
             if break_it:
-                self.best_epoch = epoch - my_first_es.tolerance
+                self.best_epoch = epoch - my_es.tolerance
             else:
                 self.best_epoch = epoch
         self.train_loss = train_loss_mean
@@ -639,7 +625,7 @@ class HyperOptImageSegmentation:
         return CLIReporter(
             metric_columns=["train_loss", "train_acc", "val_loss", "val_acc"])
 
-    def instantiation(self, config, model, param, save: bool = False, name: str = None,
+    def instantiation(self, config, model, param, save: bool = False, name: str = None, transform=None,
                       verbose: bool=False, hyperopt: bool = True, wandb=None):
         """
         Instantiation of the model + data with the parameters given by the config
@@ -650,12 +636,12 @@ class HyperOptImageSegmentation:
         param.Model.batch_size = config['batch_size']
         param.Model.optimizer = config['optimizer']
         if 'epoch' in config: param.Model.epoch = config["epoch"]
-        data = Data(param, verbose=False)
+        data = Data(param, transform, verbose=False)
         model = ImageSegmentation(model, param, data, wandb=wandb, save=save, name=name, verbose=verbose, hyperopt=hyperopt)
         return data, model
 
-    def fit(self, config, model=None, param=None, save: bool = False, name: str = None):
-        data, model = self.instantiation(config, model, param, save, name)
+    def fit(self, config, model=None, param=None, save: bool = False, name: str = None, transform=None):
+        data, model = self.instantiation(config, model, param, save, name, transform)
         model.fit()
 
     def find_epoch(self, analysis, metric, path):
@@ -696,7 +682,7 @@ class HyperOptImageSegmentation:
         print(f'The configuration of this trial is: {best_config}')
         return best_config
 
-    def main(self, model, param, save: bool = True, name: str = None):
+    def main(self, model, param, save: bool = True, name: str = None, transform=None):
         path = os.path.join(param.Path.mydata, f'HyperOpt_{name}.pkl')
         """
         Training and Validation
@@ -707,7 +693,7 @@ class HyperOptImageSegmentation:
             analysis = pickle.load(open(path, 'rb'))
         except FileNotFoundError:
             analysis = tune.run(
-                tune.with_parameters(self.fit, model=model, param=param, save=save, name=name),
+                tune.with_parameters(self.fit, model=model, param=param, save=save, name=name, transform=transform),
                 num_samples=self.trials_hopt,
                 config=self.search_space,
                 scheduler=self.scheduler,
@@ -751,20 +737,20 @@ class Utils:
     """
 
     @staticmethod
-    def transform_image(image):
+    def transform_image(image: np.ndarray):
         # undo the transformation of the image to plot it
         image = transform.denormalize(image)
         image = (image.permute(1, 2, 0)).numpy()
         return image
 
     @staticmethod
-    def transform_mask(mask):
-        return (mask.permute(1, 2, 0)).numpy()
+    def transform_mask(mask: torch.Tensor):
+        return mask.numpy()
 
     @staticmethod
     def plot(image, mask):
         image = Utils.transform_image(image)
-        mask = Utils.transform_mask(mask)
+        mask = Utils.transform_mask(mask) #Utils.transform_mask(mask)
         fig, (ax1, ax2) = plt.subplots(1, 2)
         fig.suptitle('Image - Mask')
         ax1.imshow(image)
@@ -835,8 +821,8 @@ class Utils:
         return model
 
 
-def main(model, param, name):
-    data = Data(param, verbose=True)
+def main(model, param, name, transform):
+    data = Data(param, transform, verbose=True)
     Utils.wandb_connect()
     hyperparams = {"Batch size": Param.Model.batch_size,
                    "Learning rate": Param.Model.lr,
@@ -860,34 +846,35 @@ def main(model, param, name):
     """
 
 
-def main_hyperopt(model, param, name):
+def main_hyperopt(model, param, name, transform):
     HyperOptNet = HyperOptImageSegmentation(epochs=param.Model.epochs)
-    HyperOptNet.main(model=model, param=param, name=name)
+    HyperOptNet.main(model=model, param=param, name=name, transform=transform)
 
 
 if __name__ == '__main__':
     param = Param
     analysis = Analysis()
 
-    """ Trying transfer learning using Segmentation Models library
-    Segmentation Models library is widely used in the image segmentation competitions"""
-    # https://github.com/qubvel/segmentation_models.pytorch
-    import segmentation_models_pytorch as smp
-
+    #choose encoder and pretrained weights
     encoder = 'mobilenet_v2'
     encoder_weights = 'imagenet'
 
     # create segmentation model with pretrained encoder
-    model = smp.FPN(
+    model = smp.Unet(
         encoder_name=encoder,
         encoder_weights=encoder_weights,
         classes=Param.Model.classes,
         activation=None,
     )
+
+    #Gives access by putting in global: the function Utils.transform_image needs transform to denormalize
+    global transform
+    transform = Transform(param, smp.encoders.get_preprocessing_fn(encoder, encoder_weights))
     """ Using this model with hyperoptimisation of parameters (batch_size, optimizer, learning_rate)"""
-    #main_hyperopt(model, param, encoder)
+    #main_hyperopt(model, param, encoder, transform)
+
 
     """ Using this model without hyperoptimisation"""
-    main(model, param, encoder)
+    main(model, param, encoder, transform)
 
     print('End')
