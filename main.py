@@ -804,7 +804,7 @@ class Utils:
     @staticmethod
     def accuracy(pred_mask, mask):
         pred_mask = Utils.predict(pred_mask)
-        correct = torch.eq(pred_mask, mask).int()
+        correct = torch.eq(pred_mask, mask.cpu().int()
         return float(correct.sum()) / float(correct.numel())
 
     @staticmethod
